@@ -1,6 +1,6 @@
 # Raster Perspective
 
-Apply a perspective transformation to the selected raster image using the selected path as envelope.
+Apply a perspective transformation to the selected raster image using the selected path as envelope, without the need to use an external software to transform your image.
 
 # Installation:
 
