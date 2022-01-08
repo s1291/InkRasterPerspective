@@ -6,3 +6,11 @@ Apply a perspective to the selected raster image with selected path.
 
 * Select the Raster image and the enveloppe.
 * Extensions > Raster Perspective > Perspective
+
+See below:
+
+![How to use the extension](imgs/howto.gif)
+
+## Copyright:
+
+Samir OUCHENE, 2022
