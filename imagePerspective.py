@@ -124,7 +124,19 @@ class ImagePerspective(inkex.Effect):
 
         final_w, final_h = int(W), int(H)
 
-        image = orig_image.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
+        # Check if the image has transparency
+        hasTransparency = orig_image.mode in ('RGBA', 'LA') or (orig_image.mode == 'P' and 'transparency' in orig_image.info)
+
+        transp_img = orig_image
+        self.msg(f"image format: {orig_image.format}")
+
+        # If the original image is not transparent, create a new image with alpha channel
+        if not hasTransparency:
+            transp_img = PIL_Image.new('RGBA', orig_image.size)
+            transp_img.format='PNG'
+            transp_img.paste(orig_image)
+
+        image = transp_img.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
         
         obj = inkex.Image()
         obj.set('x', vp_to_unit(xMin))
@@ -133,8 +145,8 @@ class ImagePerspective(inkex.Effect):
         obj.set('height', vp_to_unit(final_h))
         # embed the transformed image
         persp_img_data = io.BytesIO()
-        image.save(persp_img_data, orig_image.format)
-        mime = PIL_Image.MIME[orig_image.format]
+        image.save(persp_img_data, transp_img.format)
+        mime = PIL_Image.MIME[transp_img.format]
         b64 = base64.b64encode(persp_img_data.getvalue()).decode('utf-8') 
         uri= f'data:{mime};base64,{b64}'
         obj.set('xlink:href', uri)
