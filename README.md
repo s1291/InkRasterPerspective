@@ -1,14 +1,14 @@
 # Raster Perspective
 
-Apply a perspective to the selected raster image with selected path.
+Apply a perspective transformation to the selected raster image using the selected path as envelope.
 
 
 
 ## How to use
 
-(This extension was tested with both Inkscape 1.1.1 and 1.2-dev on Ubuntu 20.04)
+> (This extension was tested with both Inkscape 1.1.1 and 1.2-dev on GNU/Linux Ubuntu 20.04.3)
 
-1. Select the Raster image and the enveloppe. Make sure the enveloppe nodes are ordered as follows:
+1. Select the raster image and the quadrangle path (envelope) . Make sure the envelope nodes are ordered as follows:
 
 ![order of enveloppe nodes](imgs/order_of_nodes.png)
 
