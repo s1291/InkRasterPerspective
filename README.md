@@ -11,7 +11,7 @@ cd $HOME/.config/inkscape/extensions
 git clone git@github.com:s1291/InkRasterPerspective.git
 ```
 
-* Open Inkscape (It it is already open, close then re-open it) and you should find the extension under: **Extensions** > **Raster Perspective** > **Perspective**
+* Open Inkscape (if it is already open, close then re-open it) and you should find the extension under: **Extensions** > **Raster Perspective** > **Perspective**
 
 ## On Windows:
 
