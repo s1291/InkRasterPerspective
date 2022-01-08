@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+#!/usr/bin/env python3
+
+# Copyright (C) 2022 Samir OUCHENE, samirmath01@gmail.com
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+
+import sys
+sys.path.append('/usr/share/inkscape/extensions')
+
+import os
+import io
+import inkex
+from inkex import Image
+from PIL import Image as PIL_Image
+import base64
+import numpy
+
+
+try:
+    from base64 import decodebytes
+except ImportError:
+    from base64 import decodestring as decodebytes
+
+
+class ImagePerspective(inkex.Effect):
+    def __init__(self):
+        inkex.Effect.__init__(self)
+        
+        self.arg_parser.add_argument('-w', "--strTexte", action='store',
+                                    type=str, dest="strTexte", default='Hello',
+                                    help='Message a ecrire?')
+       
+        self.arg_parser.add_argument('-a', '--angle', action='store', type=float, dest='angle',
+                default='90', help='Rotation angle')
+                
+                
+    @staticmethod
+    def mime_to_ext(mime):
+        """Return an extension based on the mime type"""
+        # Most extensions are automatic (i.e. extension is same as minor part of mime type)
+        part = mime.split('/', 1)[1].split('+')[0]
+        return '.' + {
+            # These are the non-matching ones.
+            'svg+xml' : '.svg',
+            'jpeg'    : '.jpg',
+            'icon'    : '.ico',
+        }.get(part, part)
+
+    def extract_image(self, node):
+        """Extract the node as if it were an image."""
+        xlink = node.get('xlink:href')
+        if not xlink.startswith('data:'):
+            return # Not embedded image data
+
+        try:
+            data = xlink[5:]
+            (mimetype, data) = data.split(';', 1)
+            (base, data) = data.split(',', 1)
+        except ValueError:
+            inkex.errormsg("Invalid image format found")
+            return
+
+        if base != 'base64':
+            inkex.errormsg("Can't decode encoding: {}".format(base))
+            return
+
+        file_ext = self.mime_to_ext(mimetype)
+        return decodebytes(data.encode('utf-8'))
+        
+    # function copy-pasted from https://stackoverflow.com/a/14178717/744230
+    def find_coeffs(self, source_coords, target_coords):
+        matrix = []
+        for s, t in zip(source_coords, target_coords):
+            matrix.append([t[0], t[1], 1, 0, 0, 0, -s[0]*t[0], -s[0]*t[1]])
+            matrix.append([0, 0, 0, t[0], t[1], 1, -s[1]*t[0], -s[1]*t[1]])
+        A = numpy.array(matrix, dtype=float)
+        B = numpy.array(source_coords).reshape(8)
+        res = numpy.linalg.inv(A.T @ A) @ A.T @ B
+        return numpy.array(res).reshape(8)
+
+
+        
+    def effect(self):
+        the_image_node, envelope_node = self.svg.selection
+        img_width, img_height = the_image_node.width, the_image_node.height
+
+        img_width = self.svg.unit_to_viewport(img_width)
+        img_height = self.svg.unit_to_viewport(img_height)
+
+        nodes_pts = list(envelope_node.path.control_points)
+        node1 = (self.svg.unit_to_viewport(nodes_pts[0][0]),self.svg.unit_to_viewport(nodes_pts[0][1]))
+        node2 = (self.svg.unit_to_viewport(nodes_pts[1][0]),self.svg.unit_to_viewport(nodes_pts[1][1]))
+        node3 = (self.svg.unit_to_viewport(nodes_pts[2][0]),self.svg.unit_to_viewport(nodes_pts[2][1]))
+        node4 = (self.svg.unit_to_viewport(nodes_pts[3][0]),self.svg.unit_to_viewport(nodes_pts[3][1]))
+
+        nodes = [node1, node2, node3, node4]
+        
+        xMax = max([node[0] for node in nodes])
+        xMin = min([node[0] for node in nodes])
+        yMax = max([node[1] for node in nodes])
+        yMin = min([node[1] for node in nodes])
+        # add some assertions (FIXME)
+        
+        img_data = self.extract_image(the_image_node)    
+        orig_image = PIL_Image.open(io.BytesIO(img_data))
+
+        coeffs = self.find_coeffs(
+          [(0, 0), (img_width, 0), (img_width, img_height), (0, img_height)],
+          [(node1[0]-xMin, node1[1]-yMin), (node2[0]-xMin, node2[1]-yMin), (node3[0]-xMin, node3[1]-yMin), (node4[0]-xMin,node4[1]-yMin)]
+          )
+
+
+        W, H = xMax - xMin, yMax - yMin
+        #W, H = int(envelope_node.path.bounding_box().width), int(envelope_node.path.bounding_box().height)
+
+        #final_w, final_h = int(self.svg.unit_to_viewport(W, 'px')), int(self.svg.unit_to_viewport(H, 'px'))
+        final_w, final_h = int(W), int(H)
+
+        image = orig_image.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
+        image.thumbnail((int(self.svg.viewport_to_unit(W)),int(self.svg.viewport_to_unit(H))), PIL_Image.ANTIALIAS)
+        obj = inkex.Image()
+        obj.set('x', node1[0])
+        obj.set('y', node1[1])
+        #obj.set('width', final_w)
+        #obj.set('height', final_h)
+        # embed the transformed image
+        persp_img_data = io.BytesIO()
+        image.save(persp_img_data, orig_image.format)
+        mime = PIL_Image.MIME[orig_image.format]
+        b64 = base64.b64encode(persp_img_data.getvalue()).decode('utf-8') 
+        uri= f'data:{mime};base64,{b64}'
+        obj.set('xlink:href', uri)
+        self.svg.add(obj)
+
+
+hello = ImagePerspective()
+hello.run()
