@@ -80,15 +80,26 @@ class ImagePerspective(inkex.Effect):
     def effect(self):
         the_image_node, envelope_node = self.svg.selection
         img_width, img_height = the_image_node.width, the_image_node.height
+        
+        try:
+            unit_to_vp = self.svg.unit_to_viewport
+        except AttributeError:
+            unit_to_vp = self.svg.uutounit
 
-        img_width = self.svg.unit_to_viewport(img_width)
-        img_height = self.svg.unit_to_viewport(img_height)
+        try:
+            vp_to_unit = self.svg.viewport_to_unit
+        except AttributeError:
+            vp_to_unit = self.svg.unittouu
+
+
+        img_width = unit_to_vp(img_width)
+        img_height = unit_to_vp(img_height)
 
         nodes_pts = list(envelope_node.path.control_points)
-        node1 = (self.svg.unit_to_viewport(nodes_pts[0][0]),self.svg.unit_to_viewport(nodes_pts[0][1]))
-        node2 = (self.svg.unit_to_viewport(nodes_pts[1][0]),self.svg.unit_to_viewport(nodes_pts[1][1]))
-        node3 = (self.svg.unit_to_viewport(nodes_pts[2][0]),self.svg.unit_to_viewport(nodes_pts[2][1]))
-        node4 = (self.svg.unit_to_viewport(nodes_pts[3][0]),self.svg.unit_to_viewport(nodes_pts[3][1]))
+        node1 = (unit_to_vp(nodes_pts[0][0]),unit_to_vp(nodes_pts[0][1]))
+        node2 = (unit_to_vp(nodes_pts[1][0]),unit_to_vp(nodes_pts[1][1]))
+        node3 = (unit_to_vp(nodes_pts[2][0]),unit_to_vp(nodes_pts[2][1]))
+        node4 = (unit_to_vp(nodes_pts[3][0]),unit_to_vp(nodes_pts[3][1]))
 
         nodes = [node1, node2, node3, node4]
         
@@ -110,16 +121,14 @@ class ImagePerspective(inkex.Effect):
 
 
         W, H = xMax - xMin, yMax - yMin
-        #W, H = int(envelope_node.path.bounding_box().width), int(envelope_node.path.bounding_box().height)
 
-        #final_w, final_h = int(self.svg.unit_to_viewport(W, 'px')), int(self.svg.unit_to_viewport(H, 'px'))
         final_w, final_h = int(W), int(H)
 
         image = orig_image.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
-        image.thumbnail((int(self.svg.viewport_to_unit(W)),int(self.svg.viewport_to_unit(H))), PIL_Image.ANTIALIAS)
+        image.thumbnail((int(vp_to_unit(W)),int(vp_to_unit(H))), PIL_Image.ANTIALIAS)
         obj = inkex.Image()
-        obj.set('x', self.svg.viewport_to_unit(xMin))
-        obj.set('y', self.svg.viewport_to_unit(yMin))
+        obj.set('x', vp_to_unit(xMin))
+        obj.set('y', vp_to_unit(yMin))
         #obj.set('width', final_w)
         #obj.set('height', final_h)
         # embed the transformed image
