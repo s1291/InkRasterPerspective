@@ -126,8 +126,6 @@ class ImagePerspective(inkex.Effect):
 
         image = orig_image.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
         
-        #image.thumbnail((int(vp_to_unit(W)),int(vp_to_unit(H))), PIL_Image.ANTIALIAS)
-        #image.thumbnail((int(vp_to_unit(W*scale)),int(vp_to_unit(H*scale))), PIL_Image.ANTIALIAS)
         obj = inkex.Image()
         obj.set('x', vp_to_unit(xMin))
         obj.set('y', vp_to_unit(yMin))
