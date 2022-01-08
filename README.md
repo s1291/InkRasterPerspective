@@ -8,7 +8,7 @@ Apply a perspective transformation to the selected raster image using the select
 
 ```
 cd $HOME/.config/inkscape/extensions
-git clone git@github.com:s1291/InkRasterPerspective.git
+git clone https://github.com/s1291/InkRasterPerspective.git
 ```
 
 * Open Inkscape (if it is already open, close then re-open it) and you should find the extension under: **Extensions** > **Raster Perspective** > **Perspective**
