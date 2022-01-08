@@ -2,10 +2,9 @@
 
 # Copyright (C) 2022 Samir OUCHENE, samirmath01@gmail.com
 
-import sys
-sys.path.append('/usr/share/inkscape/extensions')
-
 import os
+import sys
+
 import io
 import inkex
 from inkex import Image
