@@ -100,9 +100,11 @@ class ImagePerspective(inkex.Effect):
         
         img_data = self.extract_image(the_image_node)    
         orig_image = PIL_Image.open(io.BytesIO(img_data))
+        pil_img_size = orig_image.size
+        scale = pil_img_size[0] / img_width
 
         coeffs = self.find_coeffs(
-          [(0, 0), (img_width, 0), (img_width, img_height), (0, img_height)],
+          [(0, 0), (img_width*scale, 0), (img_width*scale, img_height*scale), (0, img_height*scale)],
           [(node1[0]-xMin, node1[1]-yMin), (node2[0]-xMin, node2[1]-yMin), (node3[0]-xMin, node3[1]-yMin), (node4[0]-xMin,node4[1]-yMin)]
           )
 
