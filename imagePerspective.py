@@ -131,7 +131,6 @@ class ImagePerspective(inkex.Effect):
         )
 
         transp_img = orig_image
-        self.msg(f"image format: {orig_image.format}")
 
         # If the original image is not transparent, create a new image with alpha channel
         if not hasTransparency:
