@@ -16,7 +16,7 @@ git clone https://github.com/s1291/InkRasterPerspective.git
 ## On Windows:
 
 * Download the most recent version (direct link: [zip](https://github.com/s1291/InkRasterPerspective/archive/refs/heads/master.zip))
-* Extract it and copy the files `imagePerspective.py` and `imagePerspective.inx` to `%USERPROFILE%\AppData\Roaming\Inkscape`
+* Extract it and copy the files `imagePerspective.py` and `imagePerspective.inx` to `C:\Program Files\Inkscape\share\inkscape\extensions`
 
 
 # How to use
