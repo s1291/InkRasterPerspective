@@ -125,12 +125,14 @@ class ImagePerspective(inkex.Effect):
         final_w, final_h = int(W), int(H)
 
         image = orig_image.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
-        image.thumbnail((int(vp_to_unit(W)),int(vp_to_unit(H))), PIL_Image.ANTIALIAS)
+        
+        #image.thumbnail((int(vp_to_unit(W)),int(vp_to_unit(H))), PIL_Image.ANTIALIAS)
+        #image.thumbnail((int(vp_to_unit(W*scale)),int(vp_to_unit(H*scale))), PIL_Image.ANTIALIAS)
         obj = inkex.Image()
         obj.set('x', vp_to_unit(xMin))
         obj.set('y', vp_to_unit(yMin))
-        #obj.set('width', final_w)
-        #obj.set('height', final_h)
+        obj.set('width', vp_to_unit(final_w))
+        obj.set('height', vp_to_unit(final_h))
         # embed the transformed image
         persp_img_data = io.BytesIO()
         image.save(persp_img_data, orig_image.format)
