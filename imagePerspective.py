@@ -118,8 +118,8 @@ class ImagePerspective(inkex.Effect):
         image = orig_image.transform((final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC)
         image.thumbnail((int(self.svg.viewport_to_unit(W)),int(self.svg.viewport_to_unit(H))), PIL_Image.ANTIALIAS)
         obj = inkex.Image()
-        obj.set('x', node1[0])
-        obj.set('y', node1[1])
+        obj.set('x', self.svg.viewport_to_unit(xMin))
+        obj.set('y', self.svg.viewport_to_unit(yMin))
         #obj.set('width', final_w)
         #obj.set('height', final_h)
         # embed the transformed image
