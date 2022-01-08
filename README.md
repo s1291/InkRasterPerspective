@@ -2,9 +2,24 @@
 
 Apply a perspective transformation to the selected raster image using the selected path as envelope.
 
+# Installation:
+
+## On Linux:
+
+```
+cd $HOME/.config/inkscape/extensions
+git clone git@github.com:s1291/InkRasterPerspective.git
+```
+
+* Open Inkscape (It it is already open, close then re-open it) and you should find the extension under: **Extensions** > **Raster Perspective** > **Perspective**
+
+## On Windows:
+
+* Download the most recent version (direct link: [zip](https://github.com/s1291/InkRasterPerspective/archive/refs/heads/master.zip))
+* Extract it and copy the files `imagePerspective.py` and `imagePerspective.inx` to `%USERPROFILE%\AppData\Roaming\Inkscape`
 
 
-## How to use
+# How to use
 
 > (This extension was tested with both Inkscape 1.1.1 and 1.2-dev on GNU/Linux Ubuntu 20.04.3)
 
@@ -20,6 +35,7 @@ See below:
 
 ![How to use the extension](imgs/howto.gif)
 
-## Copyright:
+# Author
+Samir OUCHENE, 2021-2022
 
-Samir OUCHENE, 2022
+All code is licensed under the GNU General Public License version 3. See [the license file](https://github.com/s1291/InkRasterPerspective/blob/master/LICENSE) for details.
