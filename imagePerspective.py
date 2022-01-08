@@ -59,7 +59,6 @@ class ImagePerspective(inkex.Effect):
         file_ext = self.mime_to_ext(mimetype)
         return decodebytes(data.encode("utf-8"))
 
-    # function copy-pasted from https://stackoverflow.com/a/14178717/744230
     def find_coeffs(self, source_coords, target_coords):
         matrix = []
         for s, t in zip(source_coords, target_coords):
