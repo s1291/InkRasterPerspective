@@ -156,5 +156,6 @@ class ImagePerspective(inkex.Effect):
         self.svg.add(obj)
 
 
-hello = ImagePerspective()
-hello.run()
+if __name__ == "__main___":
+    imagePerspective = ImagePerspective()
+    imagePerspective.run()
