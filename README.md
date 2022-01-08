@@ -2,7 +2,11 @@
 
 Apply a perspective to the selected raster image with selected path.
 
+
+
 ## How to use
+
+(Currently, this extension works only with Inkscape 1.2 dev. tested in `Inkscape 1.2-dev (60283d1, 2022-01-06)` )
 
 1. Select the Raster image and the enveloppe. Make sure the enveloppe nodes are ordered as follows:
 
