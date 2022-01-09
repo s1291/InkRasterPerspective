@@ -71,6 +71,11 @@ class ImagePerspective(inkex.Effect):
 
     def effect(self):
         the_image_node, envelope_node = self.svg.selection
+        if str(envelope_node) == "image" and str(the_image_node) == "path":
+            envelope_node, the_image_node = self.svg.selection #switch
+        if str(the_image_node) != "image" and str(envelope_node) != "path":
+            inkex.utils.debug("Your selection must contain an image and a path with at least 4 points.")
+            return
         img_width, img_height = the_image_node.width, the_image_node.height
 
         try:
