@@ -157,7 +157,7 @@ class ImagePerspective(inkex.Effect):
             transp_img.paste(orig_image)
 
         image = transp_img.transform(
-            (final_w, final_h), PIL_Image.PERSPECTIVE, coeffs, PIL_Image.BICUBIC
+            (final_w, final_h), PIL_Image.Transform.PERSPECTIVE, coeffs, PIL_Image.Resampling.BICUBIC
         )
 
         obj = inkex.Image()
