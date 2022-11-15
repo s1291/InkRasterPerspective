@@ -57,7 +57,8 @@ class ImagePerspective(inkex.Effect):
         """Extract the node as if it were an image."""
         xlink = node.get("xlink:href")
         if not xlink.startswith("data:"):
-            if xlink.startswith("file:"):
+            # on Windows, paths are relative (by default?) and they do not start with file:///
+            if xlink.startswith("file:") or xlink.startswith("../"):
                 path = urlparse.urlparse(xlink).path
 
                 # convert the path to an absolute path
