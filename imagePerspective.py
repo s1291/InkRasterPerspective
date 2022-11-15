@@ -59,7 +59,9 @@ class ImagePerspective(inkex.Effect):
         if not xlink.startswith("data:"):
             if xlink.startswith("file:"):
                 path = urlparse.urlparse(xlink).path
-                #Assuming the path is absolute:
+
+                # convert the path to an absolute path
+                path = os.path.abspath(path)
                 # For details, check out the wiki page: https://wiki.inkscape.org/wiki/Image_links_manager
 
                 # Let's check that the file exists
@@ -67,7 +69,7 @@ class ImagePerspective(inkex.Effect):
                     # open the file and encode it
                     # I know, this is a horrible workaround (to b64 encode the image), but 
                     # for the sake of it, that provides an easy workaround for linked images,
-                    # and let's ignore it. #fixme
+                    # and let's ignore it for now. (#FIXME)
                     with open(path, "rb") as linked_img_file:
                         data = base64.b64encode(linked_img_file.read())
                         #return decodebytes(data.encode("utf-8"))
