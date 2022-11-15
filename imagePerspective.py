@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
 import os
 import sys
+import urllib.parse as urlparse
 
 import io
 import inkex
@@ -56,12 +57,31 @@ class ImagePerspective(inkex.Effect):
         """Extract the node as if it were an image."""
         xlink = node.get("xlink:href")
         if not xlink.startswith("data:"):
-            return  # Not embedded image data
+            if xlink.startswith("file:"):
+                path = urlparse.parse(xlink).path
+                #Assuming the path is absolute:
+                # For details, check out the wiki page: https://wiki.inkscape.org/wiki/Image_links_manager
+
+                # Let's check that the file exists
+                if os.path.isfile(path):
+                    # open the file and encode it
+                    # I know, this is a horrible workaround (to b64 encode the image), but 
+                    # for the sake of it, that provides an easy workaround for linked images,
+                    # and let's ignore it. #fixme
+                    with open(path, "rb") as linked_img_file:
+                        data = base64.b64encode(linked_img_file.read())
+                        return decodebytes(data.encode("utf-8"))
+                    
+                else:
+                    Inkex.errormsg(f"Invalid path: {path}")
+
+
+            return # Not embedded image data
 
         try:
             data = xlink[5:]
-            (mimetype, data) = data.split(";", 1)
-            (base, data) = data.split(",", 1)
+            (mimetype, data) = data.split(";", maxsplit=1)
+            (base, data) = data.split(",", maxsplit=1)
         except ValueError:
             inkex.errormsg("Invalid image format found")
             return
