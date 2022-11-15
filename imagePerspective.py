@@ -17,7 +17,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 '''
 
 import os
-import sys
+import urllib
 import urllib.parse as urlparse
 
 import io
@@ -66,7 +66,9 @@ class ImagePerspective(inkex.Effect):
                 # FIXME: redundancy
                 if starts_with_file:
                     path = urlparse.urlparse(xlink).path
-                    path = os.path.abspath(path)
+                    # On windows it is important to use urllib.request.url2pathname 
+                    # see: https://stackoverflow.com/a/43925228/5920411
+                    path = urllib.request.url2pathname(path)
                 if os.path.isfile(path):
                     # open the file and encode it
                     # I know, this is a horrible workaround (to b64 encode the image), but 
