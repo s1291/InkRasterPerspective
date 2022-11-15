@@ -17,7 +17,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 '''
 
 import os
-import urllib
+import urllib.request
 import urllib.parse as urlparse
 
 import io
