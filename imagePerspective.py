@@ -58,14 +58,19 @@ class ImagePerspective(inkex.Effect):
         xlink = node.get("xlink:href")
         if not xlink.startswith("data:"):
             # on Windows, paths are relative (by default?) and they do not start with file:///
-            if xlink.startswith("file:") or os.path.isfile(xlink):
+            _path = urlparse.urlparse(xlink).path
+            path = self.absolute_href(_path or "", cwd=os.path.dirname(self.options.input_file))
+            if xlink.startswith("file:") or os.path.isfile(path):
+                # redundant if second condition is already satisfied (FIXME)
                 path = urlparse.urlparse(xlink).path
 
                 # convert the path to an absolute path
+                # Redundant (FIXME)
                 path = os.path.abspath(path)
                 # For details, check out the wiki page: https://wiki.inkscape.org/wiki/Image_links_manager
 
                 # Let's check that the file exists
+                # redundant (FIXME)
                 if os.path.isfile(path):
                     # open the file and encode it
                     # I know, this is a horrible workaround (to b64 encode the image), but 
