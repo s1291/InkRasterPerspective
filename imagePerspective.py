@@ -58,7 +58,7 @@ class ImagePerspective(inkex.Effect):
         xlink = node.get("xlink:href")
         if not xlink.startswith("data:"):
             if xlink.startswith("file:"):
-                path = urlparse.parse(xlink).path
+                path = urlparse.urlparse(xlink).path
                 #Assuming the path is absolute:
                 # For details, check out the wiki page: https://wiki.inkscape.org/wiki/Image_links_manager
 
@@ -70,10 +70,11 @@ class ImagePerspective(inkex.Effect):
                     # and let's ignore it. #fixme
                     with open(path, "rb") as linked_img_file:
                         data = base64.b64encode(linked_img_file.read())
-                        return decodebytes(data.encode("utf-8"))
+                        #return decodebytes(data.encode("utf-8"))
+                        return decodebytes(data)
                     
                 else:
-                    Inkex.errormsg(f"Invalid path: {path}")
+                    inkex.errormsg(f"Invalid path: {path}")
 
 
             return # Not embedded image data
