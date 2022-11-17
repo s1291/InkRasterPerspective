@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Copyright (C) 2021-2022 Samir OUCHENE, samirmath01@gmail.com
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,15 +14,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301, USA.
-'''
+"""
 
 import os
 import urllib.request
-import urllib.parse as urlparse
+import urllib.parse
 
 import io
 import inkex
-from inkex import Image
 from PIL import Image as PIL_Image
 import base64
 import numpy
@@ -38,66 +37,51 @@ class ImagePerspective(inkex.Effect):
     def __init__(self):
         inkex.Effect.__init__(self)
 
-    @staticmethod
-    def mime_to_ext(mime):
-        """Return an extension based on the mime type"""
-        # Most extensions are automatic (i.e. extension is same as minor part of mime type)
-        part = mime.split("/", 1)[1].split("+")[0]
-        return (
-            "."
-            + {
-                # These are the non-matching ones.
-                "svg+xml": ".svg",
-                "jpeg": ".jpg",
-                "icon": ".ico",
-            }.get(part, part)
-        )
-
     def extract_image(self, node):
         """Extract the node as if it were an image."""
         xlink = node.get("xlink:href")
         if not xlink.startswith("data:"):
-            # on Windows, paths are relative (by default?) and they do not start with file:///
-            _path = urlparse.urlparse(xlink).path
-            path = self.absolute_href(_path or "", cwd=os.path.dirname(self.options.input_file))
+            # Parse the path and get the absolute path of the image
+            _path = urllib.parse.urlparse(xlink).path
+            path = self.absolute_href(
+                _path or "", cwd=os.path.dirname(self.options.input_file)
+            )
             starts_with_file = xlink.startswith("file:")
             if starts_with_file or os.path.isfile(path):
-               
+
                 # FIXME: redundancy
                 if starts_with_file:
-                    path = urlparse.urlparse(xlink).path
-                    # On windows it is important to use urllib.request.url2pathname 
+                    path = urllib.parse.urlparse(xlink).path
+                    # On windows it is important to use urllib.request.url2pathname
                     # see: https://stackoverflow.com/a/43925228/5920411
                     path = urllib.request.url2pathname(path)
                 if os.path.isfile(path):
                     # open the file and encode it
-                    # I know, this is a horrible workaround (to b64 encode the image), but 
+                    # I know, this is a horrible workaround (to b64 encode the image), but
                     # for the sake of it, that provides an easy workaround for linked images,
                     # and let's ignore it for now. (#FIXME)
                     with open(path, "rb") as linked_img_file:
                         data = base64.b64encode(linked_img_file.read())
-                        #return decodebytes(data.encode("utf-8"))
+                        # return decodebytes(data.encode("utf-8"))
                         return decodebytes(data)
-                    
+
                 else:
                     inkex.errormsg(f"Invalid path: {path}")
 
-
-            return # Not embedded image data
+            return  # Not embedded image data
 
         try:
             data = xlink[5:]
-            (mimetype, data) = data.split(";", maxsplit=1)
+            (_mimetype, data) = data.split(";", maxsplit=1)
             (base, data) = data.split(",", maxsplit=1)
         except ValueError:
-            inkex.errormsg("Invalid image format found")
+            inkex.errormsg("Invalid image format found.")
             return
 
         if base != "base64":
-            inkex.errormsg("Can't decode encoding: {}".format(base))
+            inkex.errormsg("Can't decode encoding: {}.".format(base))
             return
 
-        file_ext = self.mime_to_ext(mimetype)
         return decodebytes(data.encode("utf-8"))
 
     def find_coeffs(self, source_coords, target_coords):
@@ -113,9 +97,11 @@ class ImagePerspective(inkex.Effect):
     def effect(self):
         the_image_node, envelope_node = self.svg.selection
         if str(envelope_node) == "image" and str(the_image_node) == "path":
-            envelope_node, the_image_node = self.svg.selection #switch
+            envelope_node, the_image_node = self.svg.selection  # switch
         if str(the_image_node) != "image" and str(envelope_node) != "path":
-            inkex.utils.debug("Your selection must contain an image and a path with at least 4 points.")
+            inkex.errormsg(
+                "Your selection must contain an image and a path with at least 4 points."
+            )
             return
         img_width, img_height = the_image_node.width, the_image_node.height
 
@@ -184,7 +170,10 @@ class ImagePerspective(inkex.Effect):
             transp_img.paste(orig_image)
 
         image = transp_img.transform(
-            (final_w, final_h), PIL_Image.Transform.PERSPECTIVE, coeffs, PIL_Image.Resampling.BICUBIC
+            (final_w, final_h),
+            PIL_Image.Transform.PERSPECTIVE,
+            coeffs,
+            PIL_Image.Resampling.BICUBIC,
         )
 
         obj = inkex.Image()
