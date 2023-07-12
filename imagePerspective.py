@@ -169,11 +169,30 @@ class ImagePerspective(inkex.Effect):
             transp_img.format = "PNG"
             transp_img.paste(orig_image)
 
+        #get attributes from Pillow whose location depends on package version 
+        perspective = None
+        if hasattr(PIL_Image, 'PERSPECTIVE'):
+            perspective = PIL_Image.PERSPECTIVE
+        elif hasattr(PIL_Image,'Transform'):
+            if hasattr(PIL_Image.Transform, 'PERSPECTIVE'):
+                perspective = PIL_Image.Transform.PERSPECTIVE
+        if perspective is None:
+            raise RuntimeError('Could not locate PERSPECTIVE in PIL.Image')
+
+        bicubic = None
+        if hasattr(PIL_Image, 'BICUBIC'):
+            bicubic = PIL_Image.BICUBIC
+        elif hasattr(PIL_Image,'Resampling'):
+            if hasattr(PIL_Image.Resampling, 'BICUBIC'):
+                bicubic = PIL_Image.Resampling.BICUBIC
+        if bicubic is None:
+            raise RuntimeError('Could not locate BICUBIC in PIL.Image')
+
         image = transp_img.transform(
             (final_w, final_h),
-            PIL_Image.Transform.PERSPECTIVE,
+            perspective,
             coeffs,
-            PIL_Image.Resampling.BICUBIC,
+            bicubic,
         )
 
         obj = inkex.Image()
