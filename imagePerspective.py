@@ -169,11 +169,17 @@ class ImagePerspective(inkex.Effect):
             transp_img.format = "PNG"
             transp_img.paste(orig_image)
 
+        # It was announced in pillow v9.1.0 that PIL.Image.PERSPECTIVE and PIL.Image.BICUBIC were 
+        # deprecated and would be removed in v10.0 
+        # see:  https://pillow.readthedocs.io/en/stable/releasenotes/9.1.0.html#deprecations
+        #
+        # However, that decision was reversed in v9.4.0 and those constants are kept.
+        # https://pillow.readthedocs.io/en/stable/releasenotes/9.4.0.html#restored-image-constants
         image = transp_img.transform(
             (final_w, final_h),
-            PIL_Image.Transform.PERSPECTIVE,
+            PIL_Image.PERSPECTIVE,
             coeffs,
-            PIL_Image.Resampling.BICUBIC,
+            PIL_Image.BICUBIC,
         )
 
         obj = inkex.Image()
