@@ -169,30 +169,17 @@ class ImagePerspective(inkex.Effect):
             transp_img.format = "PNG"
             transp_img.paste(orig_image)
 
-        #get attributes from Pillow whose location depends on package version 
-        perspective = None
-        if hasattr(PIL_Image, 'PERSPECTIVE'):
-            perspective = PIL_Image.PERSPECTIVE
-        elif hasattr(PIL_Image,'Transform'):
-            if hasattr(PIL_Image.Transform, 'PERSPECTIVE'):
-                perspective = PIL_Image.Transform.PERSPECTIVE
-        if perspective is None:
-            raise RuntimeError('Could not locate PERSPECTIVE in PIL.Image')
-
-        bicubic = None
-        if hasattr(PIL_Image, 'BICUBIC'):
-            bicubic = PIL_Image.BICUBIC
-        elif hasattr(PIL_Image,'Resampling'):
-            if hasattr(PIL_Image.Resampling, 'BICUBIC'):
-                bicubic = PIL_Image.Resampling.BICUBIC
-        if bicubic is None:
-            raise RuntimeError('Could not locate BICUBIC in PIL.Image')
-
+        # It was announced in pillow v9.1.0 that PIL.Image.PERSPECTIVE and PIL.Image.BICUBIC were 
+        # deprecated and would be removed in v10.0 
+        # see:  https://pillow.readthedocs.io/en/stable/releasenotes/9.1.0.html#deprecations
+        #
+        # However, that decision was reversed in v9.4.0 and those constants are kept.
+        # https://pillow.readthedocs.io/en/stable/releasenotes/9.4.0.html#restored-image-constants
         image = transp_img.transform(
             (final_w, final_h),
-            perspective,
+            PIL_Image.PERSPECTIVE,
             coeffs,
-            bicubic,
+            PIL_Image.BICUBIC,
         )
 
         obj = inkex.Image()
