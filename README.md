@@ -4,6 +4,8 @@ Apply perspective transformation to bitmap images using the selected path as env
 
 # Installation:
 
+To install this extension, you can either use the extensions manager: (from the menu **Extensions** > **Manage Extensions...**), or follow the instructions below.
+
 ## On Linux:
 
 ```
@@ -21,7 +23,7 @@ git clone https://github.com/s1291/InkRasterPerspective.git
 
 # How to use
 
-> (This extension was tested with the following versions of Inkscape `1.1.1`, `1.2.1`, and `1.3-dev` on GNU/Linux Ubuntu 20.04.5).
+> (This extension was tested with the following versions of Inkscape `1.2.x`, `1.3.x`, and `1.4-dev` on Linux Ubuntu 22.04).
 
 1. Select the raster image and the quadrangle path (envelope) . Make sure the envelope nodes are ordered as follows:
 
@@ -37,6 +39,6 @@ See below:
 
 # Author
 
-Samir OUCHENE, 2021-2023
+Samir OUCHENE, 2021-2024
 
 All code is licensed under the GNU General Public License version 3. See [the license file](https://github.com/s1291/InkRasterPerspective/blob/master/LICENSE) for details.
