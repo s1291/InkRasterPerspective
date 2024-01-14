@@ -23,7 +23,7 @@ git clone https://github.com/s1291/InkRasterPerspective.git
 
 # How to use
 
-> (This extension was tested with the following versions of Inkscape `1.2.x`, `1.3.x`, and `1.4-dev` on Linux Ubuntu 22.04).
+> This extension was tested with the following versions of Inkscape `1.2.x`, `1.3.x`, and `1.4-dev`.
 
 1. Select the raster image and the quadrangle path (envelope) . Make sure the envelope nodes are ordered as follows:
 
