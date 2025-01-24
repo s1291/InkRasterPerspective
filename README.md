@@ -1,14 +1,22 @@
+<p align="center" class="has-mb-6">
+<img class="not-gallery-item" height="128" src="imgs/inkRasterPerspective_logo.svg" alt="logo">
+<br><b>InkRasterPerspective</b></br>
+<br>
+Apply perspective transformations for raster images in Inkscape
+<br>
+
+
 # Raster Perspective
 
-Apply perspective transformation to bitmap images using the selected path as envelope, without the need to use an external software to transform the image. It works for both embedded and linked images.
+Apply perspective transformation to bitmap images in **Inkscape**, without the need to use an external software to transform the image. It works for both embedded and linked images.
 
-# Installation:
+# Installation
 
-To install this extension, you can either use the extensions manager: (from the menu **Extensions** > **Manage Extensions...**), or follow the instructions below for manual installation.
+To install this extension in Inkscape, you can either use the extensions manager: (from the menu **Extensions** > **Manage Extensions...**), or follow the instructions below for manual installation.
 
 ## 1. Using the extensions manager:
 
-Go to **Extensions** > **Manage Extension...**. A separate window appears, click on the "Install Packages" tab, and type `InkRasterPerspective` within the search box and press <kbd>Enter</kbd>. Then click on the button "Install Package". These steps are illustrated below:
+Open Inkscape and go to **Extensions** > **Manage Extension...**. A separate window appears, click on the "Install Packages" tab, and type `InkRasterPerspective` within the search box and press <kbd>Enter</kbd>. Then click on the button "Install Package". These steps are illustrated below:
 
 ![Steps to install the InkRasterPerspective extension via the Extensions manager](imgs/Installation_via_extension_manager.png)
 
