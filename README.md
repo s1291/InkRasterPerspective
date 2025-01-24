@@ -6,13 +6,13 @@ Apply perspective transformations for raster images in Inkscape
 <br>
 
 
-# Raster Perspective
+# inkRasterPerspective
 
-Apply perspective transformation to bitmap images in **Inkscape**, without the need to use an external software to transform the image. It works for both embedded and linked images.
+**inkRasterPerspective** is an Inkscape extension to apply perspective transformations to raster images, without the need to use external software. It works for both embedded and linked images.
 
 # Installation
 
-To install this extension in Inkscape, you can either use the extensions manager: (from the menu **Extensions** > **Manage Extensions...**), or follow the instructions below for manual installation.
+To install this extension, you can either use the extensions manager: (from the menu **Extensions** > **Manage Extensions...**), or follow the instructions below for manual installation.
 
 ## 1. Using the extensions manager:
 
