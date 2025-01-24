@@ -13,6 +13,7 @@ Go to **Extensions** > **Manage Extension...**. A separate window appears, click
 ![Steps to install the InkRasterPerspective extension via the Extensions manager](imgs/Installation_via_extension_manager.png)
 
 ## 2. Manual Installation
+If, for some reason, the installation via the extensions manager (as shown above) doesn't work, you can install the extension manually by following the instructions below:
 
 ### 2.1. On Linux:
 
@@ -39,7 +40,7 @@ git clone https://github.com/s1291/InkRasterPerspective.git
 
 For more details on how to find the nodes order for a path, check out this [post](https://graphicdesign.stackexchange.com/a/155289/147300).
 
-2. Extensions > Raster Perspective > Perspective
+2. **Extensions** > **Raster Perspective** > **Perspective**
 
 See below:
 
