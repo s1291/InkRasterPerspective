@@ -54,7 +54,7 @@ See below:
 
 ![How to use the extension](imgs/howto.gif)
 
-# Author
+# License
 
 Samir OUCHENE, 2021-2025
 
