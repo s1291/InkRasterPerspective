@@ -25,8 +25,21 @@ If, for some reason, the installation via the extensions manager (as shown above
 
 ### 2.1. On Linux:
 
+Open terminal on the extension directory
+
 ```
 cd $HOME/.config/inkscape/extensions
+```
+
+or if you are using flatpack
+
+```
+$HOME/.var/app/org.inkscape.Inkscape/config/inkscape/extensions
+```
+
+and than
+
+```
 git clone https://github.com/s1291/InkRasterPerspective.git
 ```
 
