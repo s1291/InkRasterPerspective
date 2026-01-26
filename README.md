@@ -56,6 +56,6 @@ See below:
 
 # License
 
-Samir OUCHENE, 2021-2025
+Samir Ouchene, 2022-2026
 
 All code is licensed under the GNU General Public License version 3. See [the license file](https://github.com/s1291/InkRasterPerspective/blob/master/LICENSE) for details.
