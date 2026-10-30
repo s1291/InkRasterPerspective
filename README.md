@@ -48,6 +48,8 @@ git clone https://github.com/s1291/InkRasterPerspective.git
 
 For more details on how to find the nodes order for a path, check out this [post](https://graphicdesign.stackexchange.com/a/155289/147300).
 
+The warp follows the image as it appears on the canvas. That includes EXIF orientation and a rotation (or flip) applied to the image object. You do not need to re-import the file after rotating it.
+
 2. **Extensions** > **Raster Perspective** > **Perspective**
 
 See below:

@@ -16,6 +16,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301, USA.
 """
 
+import math
 import os
 import urllib.request
 import urllib.parse
@@ -23,6 +24,7 @@ import urllib.parse
 import io
 import inkex
 from PIL import Image as PIL_Image
+from PIL import ImageOps
 import base64
 import numpy
 
@@ -84,6 +86,56 @@ class ImagePerspective(inkex.Effect):
 
         return decodebytes(data.encode("utf-8"))
 
+    def orient_to_display(self, image):
+        """Return pixels rotated to match Inkscape's display of this file.
+
+        Inkscape renders with gdk_pixbuf_apply_embedded_orientation and sets
+        the image width and height from those pixels. Pillow leaves the camera
+        orientation in EXIF and keeps the sensor buffer unrotated, so the warp
+        would map the wrong edges onto the envelope. A rotation applied in
+        Inkscape is a transform on the image object; the corner matcher below
+        follows that too.
+        """
+        # exif_transpose drops the orientation tag, so a later save cannot
+        # rotate the already-corrected pixels a second time.
+        oriented = ImageOps.exif_transpose(image)
+        oriented.load()
+        return oriented
+
+    def _as_pair(self, point):
+        if hasattr(point, "x"):
+            return float(point.x), float(point.y)
+        return float(point[0]), float(point[1])
+
+    def _root_point(self, node, x, y):
+        """Map a point in the element's own coordinates to the document root."""
+        point = node.composed_transform().apply_to_point((x, y))
+        return float(point.x), float(point.y)
+
+    def _visual_corner_order(self, corners):
+        """Start the TL, TR, BR, BL circuit at the corner that is up and left on the page.
+
+        `corners` is that circuit in the element's local order. A rotation of
+        the object moves which local corner sits at the visual top-left; the
+        circuit itself is kept so the picture is not mirrored.
+        """
+        center_x = sum(corner[0] for corner in corners) / len(corners)
+        center_y = sum(corner[1] for corner in corners) / len(corners)
+
+        def up_leftness(corner):
+            vector_x = corner[0] - center_x
+            vector_y = corner[1] - center_y
+            length = math.hypot(vector_x, vector_y) or 1.0
+            # Document y grows downward, so up-left is (-x, -y).
+            return (-vector_x - vector_y) / length
+
+        start = max(range(len(corners)), key=lambda index: up_leftness(corners[index]))
+        ordered = corners[start:] + corners[:start]
+        # Clockwise on the page: the second corner is to the right of the last.
+        if ordered[1][0] < ordered[3][0]:
+            ordered = [ordered[0], ordered[3], ordered[2], ordered[1]]
+        return ordered
+
     def find_coeffs(self, source_coords, target_coords):
         matrix = []
         for s, t in zip(source_coords, target_coords):
@@ -119,12 +171,12 @@ class ImagePerspective(inkex.Effect):
         img_height = unit_to_vp(img_height)
 
         nodes_pts = list(envelope_node.path.control_points)
-        node1 = (unit_to_vp(nodes_pts[0][0]), unit_to_vp(nodes_pts[0][1]))
-        node2 = (unit_to_vp(nodes_pts[1][0]), unit_to_vp(nodes_pts[1][1]))
-        node3 = (unit_to_vp(nodes_pts[2][0]), unit_to_vp(nodes_pts[2][1]))
-        node4 = (unit_to_vp(nodes_pts[3][0]), unit_to_vp(nodes_pts[3][1]))
-
-        nodes = [node1, node2, node3, node4]
+        nodes = []
+        for point in nodes_pts[:4]:
+            local_x, local_y = self._as_pair(point)
+            root_x, root_y = self._root_point(envelope_node, local_x, local_y)
+            nodes.append((unit_to_vp(root_x), unit_to_vp(root_y)))
+        node1, node2, node3, node4 = nodes
 
         xMax = max([node[0] for node in nodes])
         xMin = min([node[0] for node in nodes])
@@ -133,17 +185,41 @@ class ImagePerspective(inkex.Effect):
         # add some assertions (FIXME)
 
         img_data = self.extract_image(the_image_node)
-        orig_image = PIL_Image.open(io.BytesIO(img_data))
+        # Decode fully before the buffer is discarded. Width and height below
+        # must be the oriented size, which is what the SVG image element uses.
+        with io.BytesIO(img_data) as image_bytes:
+            orig_image = self.orient_to_display(PIL_Image.open(image_bytes))
         pil_img_size = orig_image.size
         scale = pil_img_size[0] / img_width
+        # Local corner order is the pixel rectangle. The object's transform
+        # (for example rotate(-89°)) moves a different pixel corner to the
+        # visual top-left; follow that, otherwise the warp ignores the rotation
+        # Inkscape is showing.
+        left, top = the_image_node.left, the_image_node.top
+        right = left + the_image_node.width
+        bottom = top + the_image_node.height
+        source_box = [
+            (0, 0),
+            (img_width * scale, 0),
+            (img_width * scale, img_height * scale),
+            (0, img_height * scale),
+        ]
+        local_corners = [
+            (left, top),
+            (right, top),
+            (right, bottom),
+            (left, bottom),
+        ]
+        placed = []
+        for (local_x, local_y), source in zip(local_corners, source_box):
+            root_x, root_y = self._root_point(the_image_node, local_x, local_y)
+            placed.append((root_x, root_y, source[0], source[1]))
+        source_corners = [
+            (corner[2], corner[3]) for corner in self._visual_corner_order(placed)
+        ]
 
         coeffs = self.find_coeffs(
-            [
-                (0, 0),
-                (img_width * scale, 0),
-                (img_width * scale, img_height * scale),
-                (0, img_height * scale),
-            ],
+            source_corners,
             [
                 (node1[0] - xMin, node1[1] - yMin),
                 (node2[0] - xMin, node2[1] - yMin),
