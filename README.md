@@ -48,11 +48,29 @@ git clone https://github.com/s1291/InkRasterPerspective.git
 
 For more details on how to find the nodes order for a path, check out this [post](https://graphicdesign.stackexchange.com/a/155289/147300).
 
+The warp follows the image as it appears on the canvas. That includes EXIF orientation and a rotation (or flip) applied to the image object. You do not need to re-import the file after rotating it.
+
 2. **Extensions** > **Raster Perspective** > **Perspective**
 
 See below:
 
 ![How to use the extension](imgs/howto.gif)
+
+## Rectified Crop
+
+Use this when the four-corner path is drawn **on top of the photo**, around something that is a rectangle in real life but looks skewed in the picture.
+
+1. Draw a four-node path over that region. Order the nodes the same way as Perspective: 1 top-left, 2 top-right, 3 bottom-right, 4 bottom-left.
+2. Select the path and the image.
+3. **Extensions** > **Raster Perspective** > **Rectified Crop**
+
+See below:
+
+![How to use Rectified Crop](imgs/rectified-crop.gif)
+
+The tool crops to that path and warps it so all four corners are 90 degrees. The result is a new image placed at the path's top-left. Its width is the longer of the two horizontal edges of the quad, and its height is the longer of the two vertical edges, measured in the photo's pixels.
+
+Restart Inkscape after installing this menu item so the new entry is picked up.
 
 # License
 

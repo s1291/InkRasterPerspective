@@ -12,4 +12,5 @@
 	<script>
 		<command location="inx" interpreter="python">imagePerspective.py</command>
 	</script>
+	<param name="mode" type="string" gui-hidden="true">perspective</param>
 </inkscape-extension>

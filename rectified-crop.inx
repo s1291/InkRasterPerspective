@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <_name>Rectified Crop</_name>
+    <id>org.inkscape.extension.imageRectifiedCrop</id>
+    <dependency type="executable" location="inx">imagePerspective.py</dependency>
+    <effect needs-live-preview="true">
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu _name="Raster Perspective" />
+        </effects-menu>
+    </effect>
+    <script>
+        <command location="inx" interpreter="python">imagePerspective.py</command>
+    </script>
+    <param name="mode" type="string" gui-hidden="true">rectify</param>
+</inkscape-extension>
